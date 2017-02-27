@@ -3,12 +3,14 @@
 #include <stdio.h>
 
 
-extern void addNode(TreeNode ** node, int value);
+extern TreeNode * addNode(TreeNode * node, int value);
 TreeNode * readData();
 
 int main()
 {
 	TreeNode * root = readData();
+	FILE * fout = fopen("out.txt", "w");
+	fprintf(fout, "%d", root ? root->height : 0);
 	return 0;
 }
 
@@ -21,7 +23,7 @@ TreeNode * readData()
 	fscanf(fin, "%d\n", &n);
 	for (; i < n; i++) {
 		fscanf(fin, "%d", &buf);
-		addNode(&root, buf);
+		root = addNode(root, buf);
 	}
 	return root;
 }

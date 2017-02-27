@@ -1,35 +1,20 @@
 #include "TreeHandler.h"
 
-void addNode(TreeNode ** node, int value)
+TreeNode * addNode(TreeNode * node, int value)
 {
-	if (!(*node)) {
-		*node = calloc(1, sizeof(TreeNode));
-		(*node)->value = value;
-		return;
+	if (!node) {
+		TreeNode * ret = malloc(sizeof(TreeNode));
+		ret->height = 1;
+		ret->left = NULL;
+		ret->right = NULL;
+		ret->value = value;
+		return ret;
 	}
-
-	if (value > (*node)->value) {
-		if (!(*node)->right) {
-			(*node)->right = calloc(1, sizeof(TreeNode));
-			(*node)->right->value = value;
-			return;
-		}
-		else {
-			addNode(&((*node)->right), value);
-			return;
-		}
-	}
-	else {
-		if (!(*node)->left) {
-			(*node)->left = calloc(1, sizeof(TreeNode));
-			(*node)->left->value = value;
-			return;
-		}
-		else {
-			addNode(&((*node)->left), value);
-			return;
-		}
-	}
+	if (value < node->value)
+		node->left = addNode(node->left, value);
+	else
+		node->right = addNode(node->right, value);
+	return balance(node);
 }
 
 TreeNode * srRotate(TreeNode * root)
@@ -48,35 +33,37 @@ TreeNode * slRotate(TreeNode * root)
 	return tmp;
 }
 
-TreeNode * blRotate(TreeNode * root)
-{
-	root->right = srRotate(root->right);
-	return slRotate(root);
-}
-
-
-TreeNode * brRotate(TreeNode * root)
-{
-	root->left = slRotate(root->left);
-	return srRotate(root);
-}
-
 TreeNode * balance(TreeNode * root)
 {
-	if (root->left->height > root->right->height)
-	{
-		unsigned char l = root->left->left ? root->left->left->height : 0;
-		unsigned char r = root->left->right ? root->left->right->height : 0;
-		
+	root->height = getHeight(root);
+
+	if (balFactor(root) > 1) {
+		if (balFactor(root->right) < 0)
+			root->right = srRotate(root->right);
+		return slRotate(root);
 	}
+	else
+		if (balFactor(root) < -1) {
+			if (balFactor(root->left) > 0)
+				root->left = slRotate(root->left);
+			return srRotate(root);
+		}
+		else
+			return root;
+
 }
-unsigned char balFactor(TreeNode * node)
+
+char balFactor(TreeNode * node)
 {
+	if (!node)
+		return 0;
 	return getHeight(node->right) - getHeight(node->left);
 }
 
 unsigned char getHeight(TreeNode * node)
 {
+	if (!node)
+		return 0;
 	unsigned char l = node->left ? node->left->height : 0;
 	unsigned char r = node->right ? node->right->height : 0;
 	return (l > r) ? l + 1 : r + 1;
