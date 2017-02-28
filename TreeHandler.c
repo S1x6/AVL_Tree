@@ -22,6 +22,8 @@ TreeNode * srRotate(TreeNode * root)
 	TreeNode * tmp = root->left;
 	root->left = tmp->right;
 	tmp->right = root;
+	root->height = getHeight(root);
+	tmp->height = getHeight(tmp);
 	return tmp;
 }
 
@@ -30,6 +32,8 @@ TreeNode * slRotate(TreeNode * root)
 	TreeNode * tmp = root->right;
 	root->right = tmp->left;
 	tmp->left = root;
+	root->height = getHeight(root);
+	tmp->height = getHeight(tmp);
 	return tmp;
 }
 
